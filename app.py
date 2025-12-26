@@ -13,6 +13,7 @@ class Todo(db.Model):
     title =  db.Column(db.String(200), nullable = False)    
     desc =  db.Column(db.String(500), nullable = False)
     date_created =  db.Column(db.DateTime, default = datetime.now)
+    completed = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f"{self.sno} - {self.title}"
@@ -69,6 +70,18 @@ def delete(sno):
     db.session.delete(todo)
     db.session.commit()
     return redirect("/")
+
+@app.route('/completed/<int:sno>')
+def completed(sno):
+    todo = Todo.query.filter_by(sno=sno).first()
+
+    # Toggle completed state
+    todo.completed = not todo.completed
+
+    db.session.commit()
+    return redirect("/")
+
+
 
 if __name__ == "__main__":
     with app.app_context():
